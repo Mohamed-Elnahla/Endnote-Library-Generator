@@ -228,17 +228,61 @@
 
             <button id="start-btn" class="btn-primary" onclick="startProcessing()">Generate Library</button>
 
-            <div class="status-area">
-                <div class="progress-bar-container" id="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
-                <div id="status-text">Ready to start.</div>
-                <div id="summary"></div>
+        <div class="status-area">
+            <div class="progress-bar-container" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
             </div>
-        </main>
-        
-        <div class="micros">v1.2.0 • AI Powered</div>
-    </div>
+            <div id="status-text">Ready to start.</div>
+            <div id="summary"></div>
+        </div>
+
+        <button class="btn-outline" style="margin-top: 1rem; width: 100%;" onclick="toggleDetails()">Show/Hide Details</button>
+        <div id="details-panel" class="details-panel" style="display: none;">
+            <pre id="log-output"></pre>
+        </div>
+    </main>
+
+    <footer>
+        Developed by <a href="https://www.linkedin.com/in/mohamed-el-nahla/" target="_blank">Eng. Mohamed Elnahla</a> • 
+        <a href="https://github.com/Mohamed-Elnahla" target="_blank">GitHub</a>
+    </footer>
+</div>
+
+<style>
+    /* Additional styles for the new elements */
+    footer {
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+    
+    footer a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+    
+    footer a:hover {
+        text-decoration: underline;
+    }
+
+    .details-panel {
+        margin-top: 1rem;
+        background-color: #000;
+        border-radius: var(--radius);
+        padding: 1rem;
+        height: 200px;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+    }
+
+    #log-output {
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+        color: #d1d5db;
+        white-space: pre-wrap;
+    }
+</style>
 
     <script>
         // Check if pywebview is loaded
@@ -285,27 +329,44 @@
             }
         }
 
+        function toggleDetails() {
+            const panel = document.getElementById('details-panel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function logMessage(msg) {
+            const log = document.getElementById('log-output');
+            const entry = document.createElement('div');
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight; // Auto-scroll
+        }
+
         // Functions called from Python
         function updateProgress(percent, message) {
             document.getElementById('progress-bar').style.width = percent + '%';
             if (message) {
                 document.getElementById('status-text').innerText = message;
+                logMessage(message);
             }
         }
 
         function processingComplete(resultMessage) {
             updateProgress(100);
             setStatus(resultMessage);
+            logMessage("COMPLETED: " + resultMessage);
             document.getElementById('summary').innerText = "Processing Complete!";
             document.getElementById('summary').style.display = 'block';
             document.getElementById('start-btn').disabled = false;
-            // confetti or something could go here
         }
         
         function setStatus(msg, isError) {
             const el = document.getElementById('status-text');
             el.innerText = msg;
-            if (isError) el.style.color = '#ef4444';
+            if (isError) {
+                el.style.color = '#ef4444';
+                logMessage("ERROR: " + msg);
+            }
             else el.style.color = '#94a3b8';
         }
     </script>
