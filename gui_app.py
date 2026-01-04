@@ -70,10 +70,26 @@ class Api:
             print(f"Error: {e}")
             self._window.evaluate_js(f'setStatus("Error: {str(e)}", true)')
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 def main():
     api = Api()
-    html_path = os.path.join(os.getcwd(), 'gui', 'index.html')
-    # Use abspath
+    # Handle both dev environment (gui folder in CWD) and frozen environment (gui folder bundled)
+    if getattr(sys, 'frozen', False):
+        # In frozen state, we look for 'gui/index.html' relative to _MEIPASS
+        html_path = resource_path(os.path.join('gui', 'index.html'))
+    else:
+        # In dev state, we assume it's in the current directory
+        html_path = os.path.join(os.getcwd(), 'gui', 'index.html')
+    
     html_url = f"file://{os.path.abspath(html_path)}"
     
     api._window = webview.create_window(

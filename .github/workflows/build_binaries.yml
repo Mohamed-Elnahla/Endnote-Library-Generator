@@ -1,0 +1,56 @@
+name: Build Binaries
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            sep: ';'
+            artifact_name: EndNoteGenerator-Windows.exe
+            exe_path: dist/EndNoteGenerator.exe
+          - os: ubuntu-latest
+            sep: ':'
+            artifact_name: EndNoteGenerator-Linux
+            exe_path: dist/EndNoteGenerator
+          - os: macos-latest
+            sep: ':'
+            artifact_name: EndNoteGenerator-MacOS
+            exe_path: dist/EndNoteGenerator
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install system dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.0 libcairo2-dev pkg-config
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --noconfirm --onefile --windowed --name "EndNoteGenerator" --add-data "gui${{ matrix.sep }}gui" --add-data "icon.png${{ matrix.sep }}." --icon "icon.png" gui_app.py
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: ${{ matrix.exe_path }}
