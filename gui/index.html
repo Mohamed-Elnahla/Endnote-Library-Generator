@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EndNote Generator</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            max-width: 800px;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+        }
+
+        .card {
+            background-color: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .file-select {
+            display: flex;
+            gap: 1rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            font-family: inherit;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            cursor: pointer;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            border: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-area {
+            margin-top: 2rem;
+            background-color: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: var(--radius);
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--border);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--success);
+            transition: width 0.3s ease;
+        }
+
+        #status-text {
+            color: var(--text-muted);
+            text-align: center;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        #summary {
+            display: none;
+            text-align: center;
+            color: var(--success);
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        .micros {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            font-size: 0.7rem;
+            color: var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>EndNote Generator</h1>
+            <p class="subtitle">Automated PDF to EndNote Library Application</p>
+        </header>
+
+        <main class="card">
+            <div class="input-group">
+                <label>PDF Directory</label>
+                <div class="file-select">
+                    <input type="text" id="pdf-dir" placeholder="Select source folder..." readonly>
+                    <button class="btn-outline" onclick="selectFolder()">Browse</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Output XML File</label>
+                <div class="file-select">
+                    <input type="text" id="output-file" placeholder="Select output file..." readonly value="./MyLibrary.xml">
+                    <button class="btn-outline" onclick="selectSaveFile()">Save As</button>
+                </div>
+            </div>
+
+            <button id="start-btn" class="btn-primary" onclick="startProcessing()">Generate Library</button>
+
+            <div class="status-area">
+                <div class="progress-bar-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div id="status-text">Ready to start.</div>
+                <div id="summary"></div>
+            </div>
+        </main>
+        
+        <div class="micros">v1.2.0 • AI Powered</div>
+    </div>
+
+    <script>
+        // Check if pywebview is loaded
+        function isPyWebViewReady() {
+            return window.pywebview !== undefined;
+        }
+
+        async function selectFolder() {
+            if (!isPyWebViewReady()) return;
+            const path = await pywebview.api.select_folder();
+            if (path) {
+                document.getElementById('pdf-dir').value = path;
+            }
+        }
+
+        async function selectSaveFile() {
+             if (!isPyWebViewReady()) return;
+             const path = await pywebview.api.select_save_file();
+             if (path) {
+                 document.getElementById('output-file').value = path;
+             }
+        }
+
+        async function startProcessing() {
+            const dir = document.getElementById('pdf-dir').value;
+            const out = document.getElementById('output-file').value;
+            
+            if (!dir) {
+                setStatus("Please select a valid PDF directory.", true);
+                return;
+            }
+            
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('summary').style.display = 'none';
+            updateProgress(0);
+            
+            try {
+                // Call Python
+                await pywebview.api.start_processing(dir, out);
+            } catch (err) {
+                setStatus("Error: " + err, true);
+                document.getElementById('start-btn').disabled = false;
+            }
+        }
+
+        // Functions called from Python
+        function updateProgress(percent, message) {
+            document.getElementById('progress-bar').style.width = percent + '%';
+            if (message) {
+                document.getElementById('status-text').innerText = message;
+            }
+        }
+
+        function processingComplete(resultMessage) {
+            updateProgress(100);
+            setStatus(resultMessage);
+            document.getElementById('summary').innerText = "Processing Complete!";
+            document.getElementById('summary').style.display = 'block';
+            document.getElementById('start-btn').disabled = false;
+            // confetti or something could go here
+        }
+        
+        function setStatus(msg, isError) {
+            const el = document.getElementById('status-text');
+            el.innerText = msg;
+            if (isError) el.style.color = '#ef4444';
+            else el.style.color = '#94a3b8';
+        }
+    </script>
+</body>
+</html>

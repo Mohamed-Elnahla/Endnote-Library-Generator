@@ -16,7 +16,7 @@ A Python tool that scans a directory of PDFs, automatically identifies their DOI
 2. Install the required dependencies:
 
 ```bash
-pip install pymupdf requests pandas jupyter
+pip install -r requirements.txt
 ```
 
 ## Usage
@@ -41,9 +41,22 @@ print(df)
 generator.save_library("MyLibrary.xml")
 ```
 
+### Using the GUI
+
+To run the modern graphical interface:
+
+```bash
+python gui_app.py
+```
+
+- Select the folder containing your PDFs.
+- Select where to save the EndNote XML.
+- Click **Generate Library**.
+
 ### Using the Jupyter Notebook
 
 Open `demo.ipynb` to see a step-by-step interactive demonstration.
+
 
 ## Importing into EndNote
 

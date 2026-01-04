@@ -1,0 +1,6 @@
+PyMuPDF>=1.26.7
+requests
+pandas>=2.0.0
+jupyter
+pywebview>=5.1
+pythonnet; sys_platform == 'win32'

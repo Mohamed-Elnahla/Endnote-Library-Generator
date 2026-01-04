@@ -16,9 +16,10 @@ class LibraryGenerator:
         self.endnote_writer = EndNoteWriter()
         self.results_df = pd.DataFrame()
 
-    def process_directory(self, folder_path: str) -> pd.DataFrame:
+    def process_directory(self, folder_path: str, progress_callback=None) -> pd.DataFrame:
         """
         Scans a directory for PDFs, fetches metadata, and returns a DataFrame.
+        progress_callback: Optional callable that receives (current_count, total_count, message).
         """
         print(f"Scanning directory: {folder_path}...")
         
@@ -26,10 +27,14 @@ class LibraryGenerator:
         file_doi_map = self.pdf_processor.process_directory(folder_path)
         
         records = []
+        total_files = len(file_doi_map)
+        print(f"Found {total_files} PDFs. processing...")
         
-        print(f"Found {len(file_doi_map)} PDFs. processing...")
-        
-        for file_path, doi in file_doi_map.items():
+        for i, (file_path, doi) in enumerate(file_doi_map.items(), start=1):
+            filename = os.path.basename(file_path)
+            if progress_callback:
+                progress_callback(i, total_files, f"Processing {filename}...")
+
             record = {
                 'file_path': file_path,
                 'doi': doi,
