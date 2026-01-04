@@ -20,10 +20,6 @@ jobs:
             sep: ':'
             artifact_name: EndNoteGenerator-Linux
             exe_path: dist/EndNoteGenerator
-          - os: macos-latest
-            sep: ':'
-            artifact_name: EndNoteGenerator-MacOS
-            exe_path: dist/EndNoteGenerator
 
     steps:
     - uses: actions/checkout@v3
@@ -45,31 +41,9 @@ jobs:
         pip install -r requirements.txt
         pip install pyinstaller
 
-    - name: Build with PyInstaller (Windows/Linux)
-      if: runner.os != 'macOS'
+    - name: Build with PyInstaller
       run: |
         pyinstaller --noconfirm --onefile --windowed --name "EndNoteGenerator" --add-data "gui${{ matrix.sep }}gui" --add-data "icon.png${{ matrix.sep }}." --icon "icon.png" gui_app.py
-
-    - name: Build with PyInstaller (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        # Create a temporary iconset
-        mkdir EndNoteGenerator.iconset
-        # Create various sizes from the source png using sips
-        sips -z 16 16     icon.png --out EndNoteGenerator.iconset/icon_16x16.png
-        sips -z 32 32     icon.png --out EndNoteGenerator.iconset/icon_16x16@2x.png
-        sips -z 32 32     icon.png --out EndNoteGenerator.iconset/icon_32x32.png
-        sips -z 64 64     icon.png --out EndNoteGenerator.iconset/icon_32x32@2x.png
-        sips -z 128 128   icon.png --out EndNoteGenerator.iconset/icon_128x128.png
-        sips -z 256 256   icon.png --out EndNoteGenerator.iconset/icon_128x128@2x.png
-        sips -z 256 256   icon.png --out EndNoteGenerator.iconset/icon_256x256.png
-        sips -z 512 512   icon.png --out EndNoteGenerator.iconset/icon_256x256@2x.png
-        
-        # Convert iconset to icns
-        iconutil -c icns EndNoteGenerator.iconset
-        
-        # Build with .icns
-        pyinstaller --noconfirm --onefile --windowed --name "EndNoteGenerator" --add-data "gui${{ matrix.sep }}gui" --add-data "icon.png${{ matrix.sep }}." --icon "EndNoteGenerator.icns" gui_app.py
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
