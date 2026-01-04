@@ -7,7 +7,7 @@ import time
 # Ensure src is in path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from src.library_manager import LibraryGenerator
+from src.endnote_generator.library_manager import LibraryGenerator
 
 class Api:
     def __init__(self):

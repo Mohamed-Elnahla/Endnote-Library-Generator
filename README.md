@@ -1,5 +1,11 @@
 # EndNote Library Generator
 
+[![PyPI version](https://badge.fury.io/py/endnote-generator.svg)](https://badge.fury.io/py/endnote-generator)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python Versions](https://img.shields.io/pypi/pyversions/endnote-generator.svg)](https://pypi.org/project/endnote-generator/)
+
+**PyPI Package:** [https://pypi.org/project/endnote-generator/](https://pypi.org/project/endnote-generator/)
+
 ![App Icon](icon.png)
 
 
@@ -17,8 +23,13 @@ A Python tool that scans a directory of PDFs, automatically identifies their DOI
 
 ## Installation
 
-1. Clone or download this repository.
-2. Install the required dependencies:
+Install the package directly from PyPI:
+
+```bash
+pip install endnote-generator
+```
+
+Or convert a local clone:
 
 ```bash
 pip install -r requirements.txt
@@ -26,12 +37,10 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Using the Python Script
-
-You can run the processing programmatically:
+### Using the Python Package
 
 ```python
-from src.library_manager import LibraryGenerator
+from endnote_generator import LibraryGenerator
 
 # Initialize
 generator = LibraryGenerator()
@@ -73,8 +82,8 @@ Open `demo.ipynb` to see a step-by-step interactive demonstration.
 
 ## Project Structure
 
-- `src/`: Source code modules.
-- `src/pdf_processor.py`: Handles PDF text extraction and DOI finding.
-- `src/metadata_fetcher.py`: Connects to Crossref API.
-- `src/endnote_writer.py`: Generates the XML output.
-- `src/library_manager.py`: Main orchestrator.
+- `src/endnote_generator/`: Source code package.
+- `src/endnote_generator/pdf_processor.py`: Handles PDF text extraction and DOI finding.
+- `src/endnote_generator/metadata_fetcher.py`: Connects to Crossref API.
+- `src/endnote_generator/endnote_writer.py`: Generates the XML output.
+- `src/endnote_generator/library_manager.py`: Main orchestrator.

@@ -1,9 +1,9 @@
 import os
 import pandas as pd
 from typing import List, Dict, Optional
-from src.pdf_processor import PDFProcessor
-from src.metadata_fetcher import MetadataFetcher
-from src.endnote_writer import EndNoteWriter
+from .pdf_processor import PDFProcessor
+from .metadata_fetcher import MetadataFetcher
+from .endnote_writer import EndNoteWriter
 
 class LibraryGenerator:
     """
