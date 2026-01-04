@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EndNote Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --success: #22c55e;
-            --radius: 12px;
+            --bg-color: #0f0f11;
+            --card-bg: #18181b;
+            --accent: #facc15; 
+            --accent-hover: #eab308;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --border: #27272a;
+            --success: #4ade80;
+            --glass: rgba(24, 24, 27, 0.7);
         }
 
         * {
@@ -22,270 +23,321 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) var(--bg-color);
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(250, 204, 21, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(250, 204, 21, 0.05) 0%, transparent 20%);
         }
 
-        .container {
+        .app-container {
             width: 100%;
-            height: 100%;
+            max-width: 900px;
+            height: 90vh;
             display: flex;
             flex-direction: column;
             padding: 2rem;
-            max-width: 800px;
+            backdrop-filter: blur(10px);
         }
 
         header {
-            margin-bottom: 2rem;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .logo-box {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: black;
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
         }
 
         h1 {
             font-size: 2rem;
             font-weight: 700;
-            background: linear-gradient(to right, #60a5fa, #c084fc);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
         }
 
-        p.subtitle {
+        .subtitle {
+            font-size: 0.9rem;
             color: var(--text-muted);
+            font-weight: 300;
+            margin-top: -5px;
         }
 
-        .card {
-            background-color: var(--surface);
-            border-radius: var(--radius);
-            padding: 2rem;
+        .main-card {
+            background: var(--card-bg);
             border: 1px solid var(--border);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
         }
 
-        .input-group {
-            margin-bottom: 1.5rem;
+        .input-row {
+            margin-bottom: 2rem;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
             color: var(--text-muted);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            margin-bottom: 0.8rem;
             font-weight: 600;
         }
 
-        .file-select {
+        .field-container {
             display: flex;
-            gap: 1rem;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .field-container:focus-within {
+            border-color: var(--accent);
         }
 
         input[type="text"] {
             flex: 1;
-            background-color: var(--bg);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 0.75rem 1rem;
-            border-radius: var(--radius);
-            font-family: inherit;
-        }
-        
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        button {
-            cursor: pointer;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius);
+            background: transparent;
             border: none;
-            font-weight: 600;
-            transition: all 0.2s;
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
             font-family: inherit;
+            font-size: 1rem;
+            outline: none;
         }
 
-        .btn-outline {
-            background-color: transparent;
+        .btn-icon {
+            background: var(--card-bg);
             border: 1px solid var(--border);
-            color: var(--text);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
 
-        .btn-outline:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background-color: rgba(59, 130, 246, 0.1);
+        .btn-icon:hover {
+            color: var(--accent);
+            border-color: var(--accent);
         }
 
         .btn-primary {
-            background-color: var(--primary);
-            color: white;
+            background: var(--accent);
+            color: #000;
+            border: none;
             width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 700;
             font-size: 1.1rem;
-            margin-top: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .btn-primary:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(250, 204, 21, 0.2);
         }
-        
+
         .btn-primary:active {
             transform: translateY(0);
         }
         
         .btn-primary:disabled {
-            opacity: 0.5;
+            opacity: 0.7;
             cursor: not-allowed;
-            transform: none;
+            filter: grayscale(1);
         }
 
-        .status-area {
+        /* Status & Logs */
+        .status-container {
             margin-top: 2rem;
-            background-color: rgba(0,0,0,0.2);
-            padding: 1rem;
-            border-radius: var(--radius);
-            min-height: 120px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
-        
-        .progress-bar-container {
-            width: 100%;
-            height: 8px;
-            background-color: var(--border);
-            border-radius: 4px;
-            margin-bottom: 1rem;
+
+        .progress-track {
+            background: var(--border);
+            height: 6px;
+            border-radius: 3px;
             overflow: hidden;
-            display: none;
+            margin-bottom: 1rem;
         }
-        
-        .progress-bar {
-            width: 0%;
+
+        .progress-fill {
             height: 100%;
-            background-color: var(--success);
-            transition: width 0.3s ease;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--accent);
         }
 
-        #status-text {
-            color: var(--text-muted);
-            text-align: center;
-            font-family: monospace;
+        .status-text {
+            display: flex;
+            justify-content: space-between;
             font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .details-toggle {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .details-toggle:hover {
+            color: var(--accent);
+        }
+
+        .log-panel {
+            margin-top: 1rem;
+            background: #000;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s ease;
+        }
+
+        .log-panel.open {
+            height: 150px;
+        }
+
+        .log-content {
+            padding: 1rem;
+            height: 100%;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            color: #71717a;
+            line-height: 1.5;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
         }
         
-        #summary {
-            display: none;
+        .log-entry.error { color: #f87171; }
+        .log-entry.success { color: var(--success); }
+
+        footer {
+            margin-top: auto;
             text-align: center;
-            color: var(--success);
-            margin-top: 1rem;
-            font-weight: bold;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding-top: 2rem;
         }
 
-        .micros {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            font-size: 0.7rem;
-            color: var(--border);
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
         }
+
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         <header>
-            <h1>EndNote Generator</h1>
-            <p class="subtitle">Automated PDF to EndNote Library Application</p>
+            <div class="logo-box">EB</div>
+            <div>
+                <h1>EndNote Generator</h1>
+            </div>
         </header>
 
-        <main class="card">
-            <div class="input-group">
-                <label>PDF Directory</label>
-                <div class="file-select">
-                    <input type="text" id="pdf-dir" placeholder="Select source folder..." readonly>
-                    <button class="btn-outline" onclick="selectFolder()">Browse</button>
+        <main class="main-card">
+            <div class="input-row">
+                <label>Source Directory</label>
+                <div class="field-container">
+                    <input type="text" id="pdf-dir" placeholder="Choose input folder..." readonly>
+                    <button class="btn-icon" onclick="selectFolder()">📂</button>
                 </div>
             </div>
 
-            <div class="input-group">
-                <label>Output XML File</label>
-                <div class="file-select">
-                    <input type="text" id="output-file" placeholder="Select output file..." readonly value="./MyLibrary.xml">
-                    <button class="btn-outline" onclick="selectSaveFile()">Save As</button>
+            <div class="input-row">
+                <label>Output Library</label>
+                <div class="field-container">
+                    <input type="text" id="output-file" value="./MyLibrary.xml" readonly>
+                    <button class="btn-icon" onclick="selectSaveFile()">💾</button>
                 </div>
             </div>
 
-            <button id="start-btn" class="btn-primary" onclick="startProcessing()">Generate Library</button>
+            <button id="start-btn" class="btn-primary" onclick="startProcessing()">
+                <span>⚡ Start Generation</span>
+            </button>
 
-        <div class="status-area">
-            <div class="progress-bar-container" id="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
+            <div class="status-container" id="status-area" style="opacity: 0.5; transition: opacity 0.5s;">
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-bar"></div>
+                </div>
+                <div class="status-text">
+                    <span id="status-text">Ready</span>
+                    <span id="percentage">0%</span>
+                </div>
             </div>
-            <div id="status-text">Ready to start.</div>
-            <div id="summary"></div>
-        </div>
 
-        <button class="btn-outline" style="margin-top: 1rem; width: 100%;" onclick="toggleDetails()">Show/Hide Details</button>
-        <div id="details-panel" class="details-panel" style="display: none;">
-            <pre id="log-output"></pre>
-        </div>
-    </main>
+            <button class="details-toggle" onclick="toggleLog()">
+                VIEW LOGS <span>▼</span>
+            </button>
 
-    <footer>
-        Developed by <a href="https://www.linkedin.com/in/mohamed-el-nahla/" target="_blank">Eng. Mohamed Elnahla</a> • 
-        <a href="https://github.com/Mohamed-Elnahla" target="_blank">GitHub</a>
-    </footer>
-</div>
+            <div class="log-panel" id="log-panel">
+                <div class="log-content" id="log-content"></div>
+            </div>
+        </main>
 
-<style>
-    /* Additional styles for the new elements */
-    footer {
-        margin-top: 1rem;
-        text-align: center;
-        font-size: 0.8rem;
-        color: var(--text-muted);
-    }
-    
-    footer a {
-        color: var(--primary);
-        text-decoration: none;
-    }
-    
-    footer a:hover {
-        text-decoration: underline;
-    }
-
-    .details-panel {
-        margin-top: 1rem;
-        background-color: #000;
-        border-radius: var(--radius);
-        padding: 1rem;
-        height: 200px;
-        overflow-y: auto;
-        border: 1px solid var(--border);
-    }
-
-    #log-output {
-        font-family: 'Consolas', 'Monaco', monospace;
-        font-size: 0.8rem;
-        color: #d1d5db;
-        white-space: pre-wrap;
-    }
-</style>
+        <footer>
+            Developed by <a href="https://www.linkedin.com/in/mohamed-el-nahla/" target="_blank">Eng. Mohamed Elnahla</a> • 
+            <a href="https://github.com/Mohamed-Elnahla" target="_blank">GitHub</a>
+        </footer>
+    </div>
 
     <script>
-        // Check if pywebview is loaded
         function isPyWebViewReady() {
             return window.pywebview !== undefined;
         }
@@ -293,17 +345,13 @@
         async function selectFolder() {
             if (!isPyWebViewReady()) return;
             const path = await pywebview.api.select_folder();
-            if (path) {
-                document.getElementById('pdf-dir').value = path;
-            }
+            if (path) document.getElementById('pdf-dir').value = path;
         }
 
         async function selectSaveFile() {
              if (!isPyWebViewReady()) return;
              const path = await pywebview.api.select_save_file();
-             if (path) {
-                 document.getElementById('output-file').value = path;
-             }
+             if (path) document.getElementById('output-file').value = path;
         }
 
         async function startProcessing() {
@@ -311,63 +359,58 @@
             const out = document.getElementById('output-file').value;
             
             if (!dir) {
-                setStatus("Please select a valid PDF directory.", true);
+                logMessage("Please select a PDF directory.", "error");
                 return;
             }
             
             document.getElementById('start-btn').disabled = true;
-            document.getElementById('progress-container').style.display = 'block';
-            document.getElementById('summary').style.display = 'none';
-            updateProgress(0);
+            document.getElementById('status-area').style.opacity = '1';
+            updateProgress(0, "Initializing...");
+            
+            // Auto open logs on start
+            document.getElementById('log-panel').classList.add('open');
             
             try {
-                // Call Python
                 await pywebview.api.start_processing(dir, out);
             } catch (err) {
-                setStatus("Error: " + err, true);
+                logMessage(err, "error");
                 document.getElementById('start-btn').disabled = false;
             }
         }
 
-        function toggleDetails() {
-            const panel = document.getElementById('details-panel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function logMessage(msg) {
-            const log = document.getElementById('log-output');
-            const entry = document.createElement('div');
-            entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight; // Auto-scroll
-        }
-
-        // Functions called from Python
         function updateProgress(percent, message) {
             document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('percentage').innerText = percent + '%';
+            
             if (message) {
                 document.getElementById('status-text').innerText = message;
                 logMessage(message);
             }
         }
 
-        function processingComplete(resultMessage) {
+        function processingComplete(msg) {
             updateProgress(100);
-            setStatus(resultMessage);
-            logMessage("COMPLETED: " + resultMessage);
-            document.getElementById('summary').innerText = "Processing Complete!";
-            document.getElementById('summary').style.display = 'block';
+            document.getElementById('status-text').innerText = "Done";
+            logMessage(msg, "success");
             document.getElementById('start-btn').disabled = false;
         }
         
         function setStatus(msg, isError) {
-            const el = document.getElementById('status-text');
-            el.innerText = msg;
-            if (isError) {
-                el.style.color = '#ef4444';
-                logMessage("ERROR: " + msg);
-            }
-            else el.style.color = '#94a3b8';
+            document.getElementById('status-text').innerText = msg;
+            logMessage(msg, isError ? "error" : "normal");
+        }
+
+        function toggleLog() {
+            document.getElementById('log-panel').classList.toggle('open');
+        }
+
+        function logMessage(text, type='normal') {
+            const container = document.getElementById('log-content');
+            const div = document.createElement('div');
+            div.className = 'log-entry ' + type;
+            div.innerText = `> ${text}`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
         }
     </script>
 </body>

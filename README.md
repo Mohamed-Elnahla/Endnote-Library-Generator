@@ -1,6 +1,11 @@
 # EndNote Library Generator
 
+![App Icon](icon.png)
+
+
 A Python tool that scans a directory of PDFs, automatically identifies their DOIs, fetches bibliographic metadata from Crossref, and generates an EndNote-compatible XML library with file attachments.
+
+![App Main Window](main_window.png)
 
 ## Features
 
