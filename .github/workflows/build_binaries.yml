@@ -3,6 +3,8 @@ name: Build Binaries
 on:
   push:
     branches: [ "main" ]
+  release:
+    types: [created]
   workflow_dispatch:
 
 jobs:
@@ -16,10 +18,12 @@ jobs:
             sep: ';'
             artifact_name: EndNoteGenerator-Windows.exe
             exe_path: dist/EndNoteGenerator.exe
+            asset_content_type: application/vnd.microsoft.portable-executable
           - os: ubuntu-latest
             sep: ':'
             artifact_name: EndNoteGenerator-Linux
             exe_path: dist/EndNoteGenerator
+            asset_content_type: application/x-executable
 
     steps:
     - uses: actions/checkout@v3
@@ -50,3 +54,14 @@ jobs:
       with:
         name: ${{ matrix.artifact_name }}
         path: ${{ matrix.exe_path }}
+
+    - name: Upload Release Asset
+      if: github.event_name == 'release'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ${{ matrix.exe_path }}
+        asset_name: ${{ matrix.artifact_name }}
+        asset_content_type: ${{ matrix.asset_content_type }}
